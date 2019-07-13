@@ -11,8 +11,8 @@ class CrawlMachine:
             CrawlObject.crawl() 
 
 crawl = CrawlMachine()
-crawl.addDock(SecurityNews('https://www.boannews.com/media/o_list.asp'))
-crawl.addDock(SecurityNews('https://www.boannews.com/media/list.asp?mkind=1'))
+crawl.addDock(SecurityNewsWeek())
+crawl.addDock(SecurityNews())
 
 crawl.addDock(ElectNews('http://www.etnews.com/news/section.html?id1=11'))
 crawl.addDock(ElectNews('http://www.etnews.com/news/section.html?id1=04&id2=045'))

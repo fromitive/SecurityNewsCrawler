@@ -10,7 +10,8 @@ class News:
     status = None
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
     soup = None
-    url = None 
+    url = None
+    articles = []
     def __init__(self,link):
         self.link = link 
         self.url = urlparse(self.link)
@@ -30,9 +31,9 @@ class News:
             self.html = None 
 
 class SecurityNewsWeek(News):
-    articles = []
-    def __init__(self,link):
-        super().__init__(link)
+    link = 'https://www.boannews.com/media/o_list.asp'
+    def __init__(self):
+        super().__init__(self.link)
 
     def crawl(self):
         super().crawl()
@@ -54,7 +55,10 @@ class SecurityNewsWeek(News):
             self.articles.append(article)        
 
 class SecurityNews(News):
-    articles = []
+    link='https://www.boannews.com/media/list.asp?mkind=1'
+    def __init__(self):
+        super().__init__(self.link)
+
     def crawl(self):
         super().crawl()
         main_news_links = self.soup.findAll("div",class_="news_main_title")  
@@ -99,7 +103,28 @@ class SecurityNews(News):
                 articles.append(article) 
         return articles 
 
+class ElectNewsOpinion(News):
+    link = 'http://www.etnews.com/news/section.html?id1=11'
+    def __init__(self):
+        super().__init__(self.link)
+    def crawl(self):
+        super().crawl()
+        news_title = self.soup.select('.list_news > li > .clearfix > dt')
+        news_content = self.soup.select('.list_news > li > .clearfix > .summury')
+        news_date = self. soup.select('.list_news > li > .clearfix > .date')
+        for title,content,date in zip(news_title,news_content,news_date):
+            article={}
+            article.update({'news_link':title.find('a')['href']})
+            article.update({'news_title':title.text})
+            article.update({'news_preview':content.text})
+            str_date = date.select('span')[1].text
+            time = datetime.strptime(str_date,"%Y.%m.%d %H:%M:%S")
+            article.update({'news_date':time})
+            self.articles.append(article)
+
+
 class ElectNews(News):
+
     pass
 
 class EstSecurity(News):
