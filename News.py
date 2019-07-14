@@ -6,16 +6,15 @@ class FailToGetHTML(Exception):
     """ Falied To Get HTML """
     pass
 class News:
-    html = None
-    status = None
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-    soup = None
-    url = None
-    articles = []
     def __init__(self,link):
-        self.link = link 
+        self.html = None
+        self.status = None
+        self.link = link
         self.url = urlparse(self.link)
-    def crawl(self):       
+        self.articles = []
+        self.soup = None
+    def crawl(self):
         try :
             req = requests.get(self.link,headers=self.headers)
             self.status = req.status_code
@@ -28,7 +27,18 @@ class News:
            print(e,'stauts code is ',self.status) 
         except Exception as e:
             print('[DEBUG] crawl error',e)
-            self.html = None 
+            self.html = None
+
+    def getTodayArticle(self):
+        articles = []
+        now = datetime.now()
+        if self.articles == []:
+            return []
+        for article in self.articles:
+            term = now - article['news_date']
+            if term.days == 0 : #today
+                articles.append(article)
+        return articles
 
 class SecurityNewsWeek(News):
     link = 'https://www.boannews.com/media/o_list.asp'
@@ -75,8 +85,11 @@ class SecurityNews(News):
             time = datetime.strptime(news_date,"%Y-%m-%d %H:%M")
             article.update({"news_link":link})
             article.update({"news_date":time})
-            article.update({"news_title":soup.select("#news_title02")[0].text})  
-            article.update({"news_preview":soup.select("#news_content > b:nth-child(1)")[0].text})
+            article.update({"news_title":soup.select("#news_title02")[0].text})
+            try:
+                article.update({"news_preview":soup.select("#news_content > b:nth-child(1)")[0].text})
+            except IndexError:
+                article.update({"news_preview":""})
             self.articles.append(article)
                 
 
@@ -94,19 +107,10 @@ class SecurityNews(News):
             article.update({'news_date':time})
             self.articles.append(article)
             
-    def getTodayArticle(self):
-        articles = []
-        now = datetime.now()
-        for article in self.articles:
-            term = now - article['news_date']
-            if term.days == 0 : #today  
-                articles.append(article) 
-        return articles 
 
-class ElectNewsOpinion(News):
-    link = 'http://www.etnews.com/news/section.html?id1=11'
-    def __init__(self):
-        super().__init__(self.link)
+class ElectNews(News):
+    def __init__(self,link):
+        super().__init__(link)
     def crawl(self):
         super().crawl()
         news_title = self.soup.select('.list_news > li > .clearfix > dt')
@@ -122,12 +126,18 @@ class ElectNewsOpinion(News):
             article.update({'news_date':time})
             self.articles.append(article)
 
-
-class ElectNews(News):
-
-    pass
-
 class EstSecurity(News):
-    pass
-class AhnLab(News):
-    pass
+    def __init__(self,link):
+        super().__init__(link)
+    def crawl(self):
+        super().crawl()
+        news_title = self.soup.select('#searchList > div > ol > li > a')
+        news_date = self.soup.select('#searchList > div > ol > li > span')
+        for title,date in zip(news_title,news_date):
+            article ={}
+            article.update({'news_link':self.url.scheme+'://'+self.url.netloc+title['href']})
+            article.update({'news_title':title.text.strip()})
+            article.update({'news_preview':""})
+            time = datetime.strptime(date.text,"%Y.%m.%d")
+            article.update({'news_date':time})
+            self.articles.append(article)
