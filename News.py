@@ -138,6 +138,9 @@ class EstSecurity(News):
             article.update({'news_link':self.url.scheme+'://'+self.url.netloc+title['href']})
             article.update({'news_title':title.text.strip()})
             article.update({'news_preview':""})
-            time = datetime.strptime(date.text,"%Y.%m.%d")
+            try:
+                time = datetime.strptime(date.text,"%Y.%m.%d")
+            except ValueError: #today news
+                time = datetime.now()
             article.update({'news_date':time})
             self.articles.append(article)
