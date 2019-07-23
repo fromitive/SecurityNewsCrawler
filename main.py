@@ -26,7 +26,7 @@ crawl.addDock(ElectNews('http://www.etnews.com/news/section.html?id1=04&id2=045'
 
 crawl.addDock(EstSecurity('https://blog.alyac.co.kr/category/국내외%20보안동향'))
 crawl.addDock(EstSecurity('https://blog.alyac.co.kr/category/악성코드%20분석%20리포트'))
-
+crawl.addDock(KrCert('https://www.krcert.or.kr/data/secNoticeList.do'))
 
 print('crawl start')
 crawl.launch()
@@ -34,4 +34,4 @@ crawl.launch()
 for article in crawl.today_articles:
     print(article['news_title'])
     print('\t->',article['news_link'])
-        
+    
