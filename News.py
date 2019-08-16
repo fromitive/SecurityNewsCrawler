@@ -163,3 +163,22 @@ class KrCert(News):
                 time = datetime.now()
             article.update({'news_date':time})
             self.articles.append(article)
+class DigitalDaily(News):
+    def __init__(self,link):
+        super().__init__(link)
+    def crawl(self):
+        super().crawl()
+        news_content = self.soup.select('.m01_ara')[0]
+        news_title = news_content.select('dl > dt > a')
+        news_date = news_content.select('dl > dd > span')
+        for title,date in zip(news_title,news_date):
+            article = {}
+            article.update({'news_link':self.url.scheme+'://'+self.url.netloc+title['href']})
+            article.update({'news_title':title.text.strip()})
+            article.update({'news_preview':""})
+            try:
+                time = datetime.strptime(date.text.split(' ')[1],"%Y.%m.%d")
+            except ValueError: #today news
+                time = datetime.now()
+            article.update({'news_date':time})
+            self.articles.append(article)
