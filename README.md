@@ -1,15 +1,12 @@
 # SecurityNewsCrawler
 
-# 설치
-1. 파이썬 가상환경 설정
-1) windows
-python -m venv env
-env\Scripts\Activate
-2) nix
-python -m venv env
-source env/bin/activate
+# 의존 패키지
+| 패키지 명 | 내용 |
+| ------ | ------ |
+|requests| target 뉴스의 html 데이터를 가져온다 |
+| bs4 | 가져온 뉴스의 html 테그를 파싱한다 |
 
-2. pip install
+*설치*
 pip install requests
 pip install bs4
 
@@ -17,8 +14,5 @@ pip install bs4
 
 
 1. python main.py
-
-
-2. 자기가 관심 있는 뉴스 링크 복사후 슬랙에 붙여넣기!
 
 
