@@ -19,3 +19,6 @@ pip install bs4
 ## 3.사용법
 
 1. python main.py
+
+## 4.스크린샷 
+<img src="https://github.com/fromitive/SecurityNewsCrawler/blob/master/screenshot/1.png?raw=true" width="537" height="464"/>
